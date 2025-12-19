@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Debt</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Edit Debt</h1>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="borrower" class="form-label">Borrower</label>
+                <select class="form-control" id="borrower" name="borrower" required>
+                    <option value="">Select Borrower</option>
+                    {% for person in persons %}
+                        <option value="{{ person.id }}" {% if person.id == debt.name_id %}selected{% endif %}>{{ person.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="lender" class="form-label">Lender</label>
+                <select class="form-control" id="lender" name="lender" required>
+                    <option value="">Select Lender</option>
+                    {% for person in persons %}
+                        <option value="{{ person.id }}" {% if person.id == debt.lender_id %}selected{% endif %}>{{ person.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="amount" class="form-label">Amount</label>
+                <input type="number" step="0.01" class="form-control" id="amount" name="amount" value="{{ debt.amount }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="reason" class="form-label">Reason</label>
+                <input type="text" class="form-control" id="reason" name="reason" value="{{ debt.reason }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-control" id="status" name="status" required>
+                    <option value="0" {% if not debt.status %}selected{% endif %}>Unpaid</option>
+                    <option value="1" {% if debt.status %}selected{% endif %}>Paid</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Debt</button>
+            <a href="{{ url_for('display_all_data') }}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
