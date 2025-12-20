@@ -878,7 +878,7 @@
                     <form method="POST" action="{{ url_for('upload_to_github') }}">
                         <div class="mb-3">
                             <label for="githubToken" class="form-label">GitHub Personal Access Token</label>
-                            <input type="password" class="form-control" id="githubToken" name="github_token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" required>
+                            <input type="password" class="form-control" id="githubToken" name="github_token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="current-password" required>
                             <div class="form-text">You can create a token at <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings</a> (needs 'repo' scope)</div>
                         </div>
                         <div class="mb-3">
@@ -1262,7 +1262,7 @@
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('/static/sw.js')
                     .then((registration) => {
                         console.log('ServiceWorker registration successful with scope: ', registration.scope);
                     })
