@@ -1,0 +1,12 @@
+{
+  "name": "BH Bills",
+  "short_name": "BH Bills",
+  "description": "Manage your debts and bills easily",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f7fa",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": []
+}

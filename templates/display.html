@@ -3,25 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Database Data</title>
+    <title>BH Bills</title>
+    <link rel="manifest" href="/manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; }
-        .container { margin-top: 50px; }
-        .table-container { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 30px; }
-        .table thead th { background-color: #007bff; color: white; border: none; }
-        .table tbody tr:hover { background-color: #f1f3f4; }
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-bg: white;
+            --text-color: #343a40;
+            --text-muted: #6c757d;
+            --text-light: #495057;
+            --border-color: #e9ecef;
+            --shadow: rgba(0,0,0,0.2);
+            --shadow-hover: rgba(0,0,0,0.1);
+            --btn-primary-bg: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            --btn-primary-hover: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+            --btn-success-bg: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --btn-success-hover: linear-gradient(135deg, #218838 0%, #17a2b8 100%);
+            --btn-warning-bg: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            --btn-warning-hover: linear-gradient(135deg, #e0a800 0%, #d39e00 100%);
+            --btn-danger-bg: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            --btn-danger-hover: linear-gradient(135deg, #c82333 0%, #a02622 100%);
+            --btn-info-bg: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%);
+            --btn-info-hover: linear-gradient(135deg, #117a8b 0%, #0e5f6a 100%);
+            --btn-secondary-bg: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            --btn-secondary-hover: linear-gradient(135deg, #495057 0%, #343a40 100%);
+            --table-header-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --table-header-text: white;
+            --table-row-hover: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            --table-bg: white;
+            --table-border: #dee2e6;
+            --nav-bg: white;
+            --nav-link-color: #6c757d;
+            --nav-link-hover: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            --nav-link-active: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --modal-bg: white;
+            --form-bg: #f8f9fa;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .dark-mode {
+            --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            --card-bg: #2d2d2d;
+            --text-color: #e9ecef;
+            --text-muted: #adb5bd;
+            --text-light: #ced4da;
+            --border-color: #495057;
+            --shadow: rgba(0,0,0,0.5);
+            --shadow-hover: rgba(0,0,0,0.3);
+            --btn-primary-bg: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            --btn-primary-hover: linear-gradient(135deg, #0a58ca 0%, #084298 100%);
+            --btn-success-bg: linear-gradient(135deg, #198754 0%, #146c43 100%);
+            --btn-success-hover: linear-gradient(135deg, #146c43 0%, #0f5132 100%);
+            --btn-warning-bg: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+            --btn-warning-hover: linear-gradient(135deg, #e8590c 0%, #d0520b 100%);
+            --btn-danger-bg: linear-gradient(135deg, #dc3545 0%, #b02a37 100%);
+            --btn-danger-hover: linear-gradient(135deg, #b02a37 0%, #8b222c 100%);
+            --btn-info-bg: linear-gradient(135deg, #0dcaf0 0%, #0aa2c0 100%);
+            --btn-info-hover: linear-gradient(135deg, #0aa2c0 0%, #087990 100%);
+            --btn-secondary-bg: linear-gradient(135deg, #6c757d 0%, #565e64 100%);
+            --btn-secondary-hover: linear-gradient(135deg, #565e64 0%, #43464a 100%);
+            --table-header-bg: linear-gradient(135deg, #495057 0%, #343a40 100%);
+            --table-header-text: #e9ecef;
+            --table-row-hover: linear-gradient(135deg, #495057 0%, #343a40 100%);
+            --table-bg: #2d2d2d;
+            --table-border: #495057;
+            --nav-bg: #2d2d2d;
+            --nav-link-color: #adb5bd;
+            --nav-link-hover: linear-gradient(135deg, #495057 0%, #343a40 100%);
+            --nav-link-active: linear-gradient(135deg, #495057 0%, #343a40 100%);
+            --modal-bg: #2d2d2d;
+            --form-bg: #495057;
+            --font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            font-family: var(--font-family);
+            color: var(--text-color);
+        }
+        .container { margin-top: 30px; margin-bottom: 50px; }
+        .fixed-upload-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .header-section {
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+        }
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .table-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        .table thead th {
+            background: var(--table-header-bg);
+            color: var(--table-header-text);
+            border: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 15px;
+            text-align: center;
+        }
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+        .table tbody tr:hover {
+            background: var(--table-row-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            border: none;
+            text-align: center;
+        }
         .table { border-radius: 10px; overflow: hidden; }
-        h1 { color: #343a40; text-align: center; margin-bottom: 40px; }
-        h2 { color: #495057; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
-        .no-data { color: #6c757d; font-style: italic; }
-    </style>
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+            background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+            background: linear-gradient(135deg, #218838 0%, #17a2b8 100%);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+            background: linear-gradient(135deg, #e0a800 0%, #d39e00 100%);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+            background: linear-gradient(135deg, #c82333 0%, #a02622 100%);
+        }
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%);
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
+            background: linear-gradient(135deg, #117a8b 0%, #0e5f6a 100%);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+            background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+        }
+        h1 {
+            color: var(--text-color);
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .nav-tabs {
+            border: none;
+            background: var(--nav-bg);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 10px;
+            margin-bottom: 30px;
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            color: var(--text-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 25px;
+            margin: 0 5px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        .nav-tabs .nav-link:hover {
+            background: var(--nav-link-hover);
+            color: var(--text-light);
+        }
+        .nav-tabs .nav-link.active {
+            background: var(--nav-link-active);
+            color: var(--table-header-text);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            background: var(--card-bg);
+        }
+        .card-header {
+            background: var(--btn-warning-bg);
+            color: var(--text-color);
+            border: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .no-data {
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+            padding: 50px;
+            font-size: 1.1rem;
+        }
+        .amount-badge {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.8rem;
+        }
+        .status-paid {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+        .status-unpaid {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+        .paid-row {
+            background-color: #d4edda !important; /* light green for paid rows */
+        }
+        .unpaid-row {
+            background-color: #f8d7da !important; /* light red for unpaid rows */
+        }
+        .dark-mode .paid-row {
+            background-color: #155724 !important; /* darker green for dark mode */
+        }
+        .dark-mode .unpaid-row {
+            background-color: #721c24 !important; /* darker red for dark mode */
+        }
+        .clickable-row {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .clickable-row:hover {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+/* Mobile Styles (up to 576px) */
+@media (max-width: 576px) {
+    .container { margin-top: 10px; margin-bottom: 20px; padding: 0 10px; }
+    .header-section, .table-container { padding: 15px; margin-bottom: 15px; }
+    .header-section h1 { font-size: 1.5rem; margin-bottom: 15px; }
+    .table thead th, .table tbody td { padding: 8px; font-size: 0.85rem; }
+    .nav-tabs {
+        padding: 5px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .nav-tabs .nav-link {
+        padding: 8px 12px;
+        margin: 2px;
+        font-size: 0.9rem;
+        min-width: 80px;
+        text-align: center;
+    }
+    .btn { padding: 8px 16px; font-size: 0.9rem; }
+    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+    .btn-lg { padding: 12px 20px; font-size: 1rem; }
+    .fixed-upload-btn { top: 10px; right: 10px; padding: 8px 12px; font-size: 0.8rem; }
+    .card-body { padding: 15px; }
+    .modal-dialog { margin: 10px; max-width: calc(100vw - 20px); }
+    .modal-content { border-radius: 10px; }
+    .modal-header, .modal-body { padding: 20px; }
+    .form-control, .form-select { font-size: 0.9rem; padding: 10px; }
+    .form-label { font-size: 0.9rem; margin-bottom: 8px; }
+    .d-flex.gap-2 { flex-direction: column; gap: 10px !important; }
+    .d-flex.align-items-center.gap-2 { flex-direction: column; align-items: stretch !important; }
+    .table-responsive { font-size: 0.8rem; }
+    .no-data { padding: 30px 15px; font-size: 0.9rem; }
+    .amount-badge { padding: 4px 10px; font-size: 0.8rem; }
+    .status-badge { padding: 4px 10px; font-size: 0.75rem; }
+}
+
+/* Tablet and Laptop Styles (577px to 1024px) */
+@media (min-width: 577px) and (max-width: 1024px) {
+    .container { margin-top: 20px; margin-bottom: 40px; }
+    .header-section, .table-container { padding: 25px; }
+    .table thead th, .table tbody td { padding: 12px; }
+    .nav-tabs { padding: 8px; }
+    .nav-tabs .nav-link { padding: 10px 18px; margin: 3px; }
+    .btn { padding: 10px 20px; }
+    .btn-sm { padding: 8px 16px; }
+    .btn-lg { padding: 14px 24px; }
+    .fixed-upload-btn { top: 15px; right: 15px; }
+    .modal-dialog { max-width: 90vw; }
+    .modal-lg { max-width: 95vw; }
+    .table-responsive { font-size: 0.9rem; }
+    .d-flex.gap-2 { gap: 15px !important; }
+    .d-flex.align-items-center.gap-2 { gap: 15px !important; }
+}
+
+/* Laptop and Desktop Styles (1025px+) - Default styles apply */
+@media (min-width: 1025px) {
+    .container { max-width: 1400px; }
+    .table-responsive { font-size: 1rem; }
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+</style>
 </head>
 <body>
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="display-4">Database Data</h1>
-            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#uploadToGitHubModal">Upload to GitHub</button>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="display-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: 0 2px 4px rgba(102, 126, 234, 0.3); animation: gradientShift 3s ease infinite;"><i class="fas fa-receipt me-3" style="color: #667eea;"></i>BH Bills</h1>
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-outline-primary" id="installBtn" style="display: none;">
+                    <i class="fas fa-download"></i> Install App
+                </button>
+                <button type="button" class="btn btn-outline-secondary" id="themeToggle">
+                    <i class="fas fa-moon" id="themeIcon"></i> Dark Mode
+                </button>
+                <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#uploadToGitHubModal">
+                    <i class="fas fa-upload"></i> Upload to GitHub
+                </button>
+            </div>
+                </div>
+            </div>
         </div>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -55,7 +453,7 @@
                                 {% for summary in unpaid_summary %}
                                     <tr class="clickable-row" data-borrower-id="{{ summary.borrower_id }}" data-lender-id="{{ summary.lender_id }}">
                                         <td>{{ summary.borrower_name }}</td>
-                                        <td>${{ "%.2f"|format(summary.total_unpaid) }}</td>
+                                        <td>₱{{ "%.2f"|format(summary.total_unpaid) }}</td>
                                         <td>{{ summary.lender_name }}</td>
                                         <td>
                                             <button type="button" class="btn btn-sm btn-info view-all-btn" data-borrower-id="{{ summary.borrower_id }}" data-lender-id="{{ summary.lender_id }}" data-borrower-name="{{ summary.borrower_name }}" data-lender-name="{{ summary.lender_name }}">View All</button>
@@ -72,9 +470,23 @@
         </div>
         <ul class="nav nav-tabs" id="tableTabs" role="tablist">
             {% for table in tables %}
+                {% if table == 'history' %}
                 <li class="nav-item" role="presentation">
                     <button class="nav-link {% if table == active_tab %}active{% endif %}" id="{{ table }}-tab" data-bs-toggle="tab" data-bs-target="#{{ table }}" type="button" role="tab" aria-controls="{{ table }}" aria-selected="{% if table == active_tab %}true{% else %}false{% endif %}">{{ table | title }}</button>
                 </li>
+                {% elif table == 'debt' %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if table == active_tab %}active{% endif %}" id="{{ table }}-tab" data-bs-toggle="tab" data-bs-target="#{{ table }}" type="button" role="tab" aria-controls="{{ table }}" aria-selected="{% if table == active_tab %}true{% else %}false{% endif %}">{{ table | title }}</button>
+                </li>
+                {% elif table == 'person' %}
+                <li class="nav-item ms-auto" role="presentation">
+                    <button class="nav-link {% if table == active_tab %}active{% endif %}" id="{{ table }}-tab" data-bs-toggle="tab" data-bs-target="#{{ table }}" type="button" role="tab" aria-controls="{{ table }}" aria-selected="{% if table == active_tab %}true{% else %}false{% endif %}">{{ table | title }}</button>
+                </li>
+                {% else %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if table == active_tab %}active{% endif %}" id="{{ table }}-tab" data-bs-toggle="tab" data-bs-target="#{{ table }}" type="button" role="tab" aria-controls="{{ table }}" aria-selected="{% if table == active_tab %}true{% else %}false{% endif %}">{{ table | title }}</button>
+                </li>
+                {% endif %}
             {% endfor %}
         </ul>
         <div class="tab-content" id="tableTabsContent">
@@ -82,10 +494,23 @@
                 <div class="tab-pane fade {% if table == active_tab %}show active{% endif %}" id="{{ table }}" role="tabpanel" aria-labelledby="{{ table }}-tab">
                     <div class="table-container">
                         {% if table == 'person' %}
-                            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addPersonModal">Add Person</button>
+                            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addPersonModal">Add Names</button>
                         {% elif table == 'debt' %}
-                            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addDebtModal">Add Debt</button>
-                            <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#splitDebtModal">Split Debt</button>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDebtModal">Add Debt</button>
+                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#splitDebtModal">Split Debt</button>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <label for="sortSelect-{{ table }}" class="form-label mb-0">Filterby :</label>
+                                    <select class="form-select form-select-sm" id="sortSelect-{{ table }}" style="width: auto;">
+                                        <option value="">Names</option>
+                                        {% for person in all_data.get('person', []) %}
+                                            <option value="{{ person.name }}">{{ person.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
                         {% endif %}
                         {% if all_data[table] and all_data[table] is not mapping %}
                             <div class="table-responsive">
@@ -93,7 +518,11 @@
                                     <thead>
                                         <tr>
                                             {% for col in all_data[table][0].keys() %}
-                                                <th>{{ col | replace('_', ' ') | title }}</th>
+                                                {% if table == 'debt' and (col == 'id' or col == 'name_id' or col == 'lender_id') %}
+                                                    {# Skip id, name_id and lender_id columns for debt table #}
+                                                {% else %}
+                                                    <th class="sortable" data-column="{{ col }}" {% if col == 'date' or col == 'timestamp' or (table == 'history' and col == 'id') %}data-sort-default="desc"{% endif %}>{{ col | replace('_', ' ') | title }} <i class="fas fa-sort"></i></th>
+                                                {% endif %}
                                             {% endfor %}
                                             {% if table == 'person' or table == 'debt' %}
                                                 <th>Actions</th>
@@ -102,15 +531,25 @@
                                     </thead>
                                     <tbody>
                                         {% for row in all_data[table] %}
-                                    <tr>
+                                    <tr class="{% if table == 'debt' %}{% if row.status %}paid-row{% else %}unpaid-row{% endif %}{% endif %}">
                                         {% for col, value in row.items() %}
-                                            <td>
-                                                {% if col == 'status' %}
-                                                    {% if value %}Paid{% else %}Unpaid{% endif %}
-                                                {% else %}
-                                                    {{ value if value is not none else '-' }}
-                                                {% endif %}
-                                            </td>
+                                            {% if table == 'debt' and (col == 'id' or col == 'name_id' or col == 'lender_id') %}
+                                                {# Skip id, name_id and lender_id columns for debt table #}
+                                            {% else %}
+                                                <td>
+                                                    {% if col == 'status' %}
+                                                        {% if value %}Paid{% else %}Unpaid{% endif %}
+                                                    {% elif col == 'amount' %}
+                                                        ₱{{ "%.2f"|format(value) if value is not none else '-' }}
+                                                    {% elif col == 'date' %}
+                                                        {{ value.strftime('%b %d, %Y %I:%M:%S %p') if value is not none else '-' }}
+                                                    {% elif col == 'timestamp' %}
+                                                        {{ '' + value.strftime('%b %d,%Y %I:%M:%S %p') + '' if value is not none else '-' }}
+                                                    {% else %}
+                                                        {{ value if value is not none else '-' }}
+                                                    {% endif %}
+                                                </td>
+                                            {% endif %}
                                         {% endfor %}
                                         {% if table == 'person' %}
                                             <td>
@@ -141,21 +580,31 @@
         </div>
     </div>
 
+
+
     <!-- Add Person Modal -->
     <div class="modal fade" id="addPersonModal" tabindex="-1" aria-labelledby="addPersonModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addPersonModalLabel">Add Person</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content" style="border: none; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 20px 20px 0 0; padding: 25px;">
+                    <h5 class="modal-title" id="addPersonModalLabel" style="font-weight: 700; font-size: 1.5rem;">
+                        <i class="fas fa-user-plus me-2"></i>Add New Person
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form method="POST" action="{{ url_for('add_person') }}">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                <div class="modal-body" style="padding: 30px;">
+                    <form method="POST" action="{{ url_for('add_person') }}" id="addPersonForm">
+                        <div class="mb-4">
+                            <label for="name" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                <i class="fas fa-user me-2" style="color: #667eea;"></i>Name
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="name" name="name" required placeholder="Enter person's name" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
                         </div>
-                        <button type="submit" class="btn btn-primary">Add Person</button>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="addPersonBtn" style="border-radius: 15px; padding: 15px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                                <i class="fas fa-plus me-2"></i>Add Person
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -165,18 +614,26 @@
     <!-- Edit Person Modal -->
     <div class="modal fade" id="editPersonModal" tabindex="-1" aria-labelledby="editPersonModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editPersonModalLabel">Edit Person</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content" style="border: none; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); color: white; border: none; border-radius: 20px 20px 0 0; padding: 25px;">
+                    <h5 class="modal-title" id="editPersonModalLabel" style="font-weight: 700; font-size: 1.5rem;">
+                        <i class="fas fa-edit me-2"></i>Edit Person
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="padding: 30px;">
                     <form method="POST" id="editPersonForm">
-                        <div class="mb-3">
-                            <label for="editName" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="editName" name="name" required>
+                        <div class="mb-4">
+                            <label for="editName" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                <i class="fas fa-user me-2" style="color: #ffc107;"></i>Name
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="editName" name="name" required placeholder="Enter person's name" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
                         </div>
-                        <button type="submit" class="btn btn-primary">Update Person</button>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-warning btn-lg" id="editPersonBtn" style="border-radius: 15px; padding: 15px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                                <i class="fas fa-save me-2"></i>Update Person
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -185,48 +642,68 @@
 
     <!-- Add Debt Modal -->
     <div class="modal fade" id="addDebtModal" tabindex="-1" aria-labelledby="addDebtModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addDebtModalLabel">Add Debt</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border: none; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 20px 20px 0 0; padding: 25px;">
+                    <h5 class="modal-title" id="addDebtModalLabel" style="font-weight: 700; font-size: 1.5rem;">
+                        <i class="fas fa-plus-circle me-2"></i>Add New Debt
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form method="POST" action="{{ url_for('add_debt') }}">
-                        <div class="mb-3">
-                            <label for="borrower" class="form-label">Borrower</label>
-                            <select class="form-control" id="borrower" name="borrower" required>
-                                <option value="">Select Borrower</option>
-                                {% for person in all_data.get('person', []) %}
-                                    <option value="{{ person.id }}">{{ person.name }}</option>
-                                {% endfor %}
-                            </select>
+                <div class="modal-body" style="padding: 30px;">
+                    <form method="POST" action="{{ url_for('add_debt') }}" id="addDebtForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="borrower" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                    <i class="fas fa-user-minus me-2" style="color: #dc3545;"></i>Borrower
+                                </label>
+                                <select class="form-select form-select-lg" id="borrower" name="borrower" required style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
+                                    <option value="">Select Borrower</option>
+                                    {% for person in all_data.get('person', []) %}
+                                        <option value="{{ person.id }}">{{ person.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="lender" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                    <i class="fas fa-user-plus me-2" style="color: #28a745;"></i>Lender
+                                </label>
+                                <select class="form-select form-select-lg" id="lender" name="lender" required style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
+                                    <option value="">Select Lender</option>
+                                    {% for person in all_data.get('person', []) %}
+                                        <option value="{{ person.id }}">{{ person.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="lender" class="form-label">Lender</label>
-                            <select class="form-control" id="lender" name="lender" required>
-                                <option value="">Select Lender</option>
-                                {% for person in all_data.get('person', []) %}
-                                    <option value="{{ person.id }}">{{ person.name }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="amount" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                    <i class="fas fa-dollar-sign me-2" style="color: #ffc107;"></i>Amount (₱)
+                                </label>
+                                <input type="number" step="0.01" class="form-control form-control-lg" id="amount" name="amount" required placeholder="0.00" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="status" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                    <i class="fas fa-check-circle me-2" style="color: #17a2b8;"></i>Status
+                                </label>
+                                <select class="form-select form-select-lg" id="status" name="status" required style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
+                                    <option value="0">Unpaid</option>
+                                    <option value="1">Paid</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="amount" class="form-label">Amount</label>
-                            <input type="number" step="0.01" class="form-control" id="amount" name="amount" required>
+                        <div class="mb-4">
+                            <label for="reason" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                <i class="fas fa-comment me-2" style="color: #6f42c1;"></i>Reason
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="reason" name="reason" required placeholder="Enter reason for the debt" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
                         </div>
-                        <div class="mb-3">
-                            <label for="reason" class="form-label">Reason</label>
-                            <input type="text" class="form-control" id="reason" name="reason" required>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="addDebtBtn" style="border-radius: 15px; padding: 15px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                                <i class="fas fa-plus me-2"></i>Add Debt
+                            </button>
                         </div>
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-control" id="status" name="status" required>
-                                <option value="0">Unpaid</option>
-                                <option value="1">Paid</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Add Debt</button>
                     </form>
                 </div>
             </div>
@@ -235,48 +712,68 @@
 
     <!-- Edit Debt Modal -->
     <div class="modal fade" id="editDebtModal" tabindex="-1" aria-labelledby="editDebtModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editDebtModalLabel">Edit Debt</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border: none; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); color: white; border: none; border-radius: 20px 20px 0 0; padding: 25px;">
+                    <h5 class="modal-title" id="editDebtModalLabel" style="font-weight: 700; font-size: 1.5rem;">
+                        <i class="fas fa-edit me-2"></i>Edit Debt
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="padding: 30px;">
                     <form method="POST" id="editDebtForm">
-                        <div class="mb-3">
-                            <label for="editBorrower" class="form-label">Borrower</label>
-                            <select class="form-control" id="editBorrower" name="borrower" required>
-                                <option value="">Select Borrower</option>
-                                {% for person in all_data.get('person', []) %}
-                                    <option value="{{ person.id }}">{{ person.name }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="editBorrower" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                    <i class="fas fa-user-minus me-2" style="color: #dc3545;"></i>Borrower
+                                </label>
+                                <select class="form-select form-select-lg" id="editBorrower" name="borrower" required style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
+                                    <option value="">Select Borrower</option>
+                                    {% for person in all_data.get('person', []) %}
+                                        <option value="{{ person.id }}">{{ person.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="editLender" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                    <i class="fas fa-user-plus me-2" style="color: #28a745;"></i>Lender
+                                </label>
+                                <select class="form-select form-select-lg" id="editLender" name="lender" required style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
+                                    <option value="">Select Lender</option>
+                                    {% for person in all_data.get('person', []) %}
+                                        <option value="{{ person.id }}">{{ person.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="editLender" class="form-label">Lender</label>
-                            <select class="form-control" id="editLender" name="lender" required>
-                                <option value="">Select Lender</option>
-                                {% for person in all_data.get('person', []) %}
-                                    <option value="{{ person.id }}">{{ person.name }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="editAmount" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                    <i class="fas fa-dollar-sign me-2" style="color: #ffc107;"></i>Amount (₱)
+                                </label>
+                                <input type="number" step="0.01" class="form-control form-control-lg" id="editAmount" name="amount" required placeholder="0.00" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="editStatus" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                    <i class="fas fa-check-circle me-2" style="color: #17a2b8;"></i>Status
+                                </label>
+                                <select class="form-select form-select-lg" id="editStatus" name="status" required style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
+                                    <option value="0">Unpaid</option>
+                                    <option value="1">Paid</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="editAmount" class="form-label">Amount</label>
-                            <input type="number" step="0.01" class="form-control" id="editAmount" name="amount" required>
+                        <div class="mb-4">
+                            <label for="editReason" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                <i class="fas fa-comment me-2" style="color: #6f42c1;"></i>Reason
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="editReason" name="reason" required placeholder="Enter reason for the debt" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
                         </div>
-                        <div class="mb-3">
-                            <label for="editReason" class="form-label">Reason</label>
-                            <input type="text" class="form-control" id="editReason" name="reason" required>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-warning btn-lg" id="editDebtBtn" style="border-radius: 15px; padding: 15px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                                <i class="fas fa-save me-2"></i>Update Debt
+                            </button>
                         </div>
-                        <div class="mb-3">
-                            <label for="editStatus" class="form-label">Status</label>
-                            <select class="form-control" id="editStatus" name="status" required>
-                                <option value="0">Unpaid</option>
-                                <option value="1">Paid</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Update Debt</button>
                     </form>
                 </div>
             </div>
@@ -285,39 +782,51 @@
 
     <!-- Split Debt Modal -->
     <div class="modal fade" id="splitDebtModal" tabindex="-1" aria-labelledby="splitDebtModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="splitDebtModalLabel">Split Debt</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border: none; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; border-radius: 20px 20px 0 0; padding: 25px;">
+                    <h5 class="modal-title" id="splitDebtModalLabel" style="font-weight: 700; font-size: 1.5rem;">
+                        <i class="fas fa-share-alt me-2"></i>Split Debt
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form method="POST" action="{{ url_for('split_debt') }}">
-                        <div class="mb-3">
-                            <label for="splitLender" class="form-label">Lender Name</label>
-                            <select class="form-control" id="splitLender" name="lender" required>
-                                <option value="">Select Lender</option>
-                                {% for person in all_data.get('person', []) %}
-                                    <option value="{{ person.id }}">{{ person.name }}</option>
-                                {% endfor %}
-                            </select>
+                <div class="modal-body" style="padding: 30px;">
+                    <form method="POST" action="{{ url_for('split_debt') }}" id="splitDebtForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="splitLender" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                    <i class="fas fa-user-plus me-2" style="color: #28a745;"></i>Lender Name
+                                </label>
+                                <select class="form-select form-select-lg" id="splitLender" name="lender" required style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
+                                    <option value="">Select Lender</option>
+                                    {% for person in all_data.get('person', []) %}
+                                        <option value="{{ person.id }}">{{ person.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="splitAmount" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                    <i class="fas fa-dollar-sign me-2" style="color: #ffc107;"></i>Total Amount (₱)
+                                </label>
+                                <input type="number" step="0.01" class="form-control form-control-lg" id="splitAmount" name="amount" required placeholder="0.00" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="splitAmount" class="form-label">Total Amount</label>
-                            <input type="number" step="0.01" class="form-control" id="splitAmount" name="amount" required>
+                        <div class="mb-4">
+                            <label for="splitReason" class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 10px;">
+                                <i class="fas fa-comment me-2" style="color: #6f42c1;"></i>Reason
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="splitReason" name="reason" required placeholder="Enter reason for splitting the debt" style="border-radius: 12px; border: 2px solid #e9ecef; padding: 12px; font-size: 1rem;">
                         </div>
-                        <div class="mb-3">
-                            <label for="splitReason" class="form-label">Reason</label>
-                            <input type="text" class="form-control" id="splitReason" name="reason" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Select People to Split With</label>
+                        <div class="mb-4">
+                            <label class="form-label" style="font-weight: 600; color: #495057; margin-bottom: 15px;">
+                                <i class="fas fa-users me-2" style="color: #17a2b8;"></i>Select People to Split With
+                            </label>
                             <div class="row">
                                 {% for person in all_data.get('person', []) %}
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="{{ person.name }}" id="splitPerson{{ person.id }}" name="split_names">
-                                            <label class="form-check-label" for="splitPerson{{ person.id }}">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check" style="padding: 10px; border-radius: 10px; border: 1px solid #e9ecef; background: #f8f9fa;">
+                                            <input class="form-check-input" type="checkbox" value="{{ person.name }}" id="splitPerson{{ person.id }}" name="split_names" style="margin-right: 10px;">
+                                            <label class="form-check-label" for="splitPerson{{ person.id }}" style="font-weight: 500; cursor: pointer;">
                                                 {{ person.name }}
                                             </label>
                                         </div>
@@ -325,7 +834,11 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Split Debt</button>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg" id="splitDebtBtn" style="border-radius: 15px; padding: 15px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                                <i class="fas fa-share-alt me-2"></i>Split Debt
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -335,12 +848,14 @@
     <!-- View All Unpaid Debts Modal -->
     <div class="modal fade" id="viewAllModal" tabindex="-1" aria-labelledby="viewAllModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewAllModalLabel">Unpaid Debts</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content" style="border: none; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%); color: white; border: none; border-radius: 20px 20px 0 0; padding: 25px;">
+                    <h5 class="modal-title" id="viewAllModalLabel" style="font-weight: 700; font-size: 1.5rem;">
+                        <i class="fas fa-list-ul me-2"></i>Unpaid Debts
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="padding: 30px;">
                     <div id="unpaidDebtsContent">
                         <!-- Content will be loaded here via AJAX -->
                     </div>
@@ -352,12 +867,14 @@
     <!-- Upload to GitHub Modal -->
     <div class="modal fade" id="uploadToGitHubModal" tabindex="-1" aria-labelledby="uploadToGitHubModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="uploadToGitHubModalLabel">Upload Database to GitHub</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content" style="border: none; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; border-radius: 20px 20px 0 0; padding: 25px;">
+                    <h5 class="modal-title" id="uploadToGitHubModalLabel" style="font-weight: 700; font-size: 1.5rem;">
+                        <i class="fas fa-upload me-2"></i>Upload Database to GitHub
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="padding: 30px;">
                     <form method="POST" action="{{ url_for('upload_to_github') }}">
                         <div class="mb-3">
                             <label for="githubToken" class="form-label">GitHub Personal Access Token</label>
@@ -377,6 +894,86 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Handle add debt form submission with loading state
+        document.getElementById('addDebtForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('addDebtBtn');
+            const originalText = submitBtn.innerHTML;
+
+            // Disable the button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Adding Debt...';
+
+            // Re-enable after 3 seconds (in case of slow response)
+            setTimeout(function() {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }, 3000);
+        });
+
+        // Handle edit debt form submission with loading state
+        document.getElementById('editDebtForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('editDebtBtn');
+            const originalText = submitBtn.innerHTML;
+
+            // Disable the button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Updating Debt...';
+
+            // Re-enable after 3 seconds (in case of slow response)
+            setTimeout(function() {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }, 3000);
+        });
+
+        // Handle split debt form submission with loading state
+        document.getElementById('splitDebtForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('splitDebtBtn');
+            const originalText = submitBtn.innerHTML;
+
+            // Disable the button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Splitting Debt...';
+
+            // Re-enable after 3 seconds (in case of slow response)
+            setTimeout(function() {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }, 3000);
+        });
+
+        // Handle add person form submission with loading state
+        document.getElementById('addPersonForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('addPersonBtn');
+            const originalText = submitBtn.innerHTML;
+
+            // Disable the button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Adding Person...';
+
+            // Re-enable after 3 seconds (in case of slow response)
+            setTimeout(function() {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }, 3000);
+        });
+
+        // Handle edit person form submission with loading state
+        document.getElementById('editPersonForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('editPersonBtn');
+            const originalText = submitBtn.innerHTML;
+
+            // Disable the button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Updating Person...';
+
+            // Re-enable after 3 seconds (in case of slow response)
+            setTimeout(function() {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }, 3000);
+        });
+
         // Handle edit person button clicks
         document.querySelectorAll('.edit-person-btn').forEach(button => {
             button.addEventListener('click', function() {
@@ -433,6 +1030,247 @@
                 new bootstrap.Modal(document.getElementById('viewAllModal')).show();
             });
         });
+
+        // Dark mode toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const body = document.body;
+
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+            themeToggle.innerHTML = '<i class="fas fa-sun" id="themeIcon"></i> Light Mode';
+        }
+
+        // Toggle theme on button click
+        themeToggle.addEventListener('click', function() {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                themeToggle.innerHTML = '<i class="fas fa-sun" id="themeIcon"></i> Light Mode';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                themeToggle.innerHTML = '<i class="fas fa-moon" id="themeIcon"></i> Dark Mode';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Table sorting functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const sortableHeaders = document.querySelectorAll('.sortable');
+
+            sortableHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const table = this.closest('table');
+                    const tbody = table.querySelector('tbody');
+                    const column = this.getAttribute('data-column');
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+                    // Determine sort direction
+                    const isAscending = this.classList.contains('asc');
+                    const direction = isAscending ? -1 : 1;
+
+                    // Clear previous sort indicators
+                    sortableHeaders.forEach(h => {
+                        h.classList.remove('asc', 'desc');
+                        const icon = h.querySelector('i');
+                        if (icon) icon.className = 'fas fa-sort';
+                    });
+
+                    // Set new sort indicator
+                    this.classList.toggle('asc', !isAscending);
+                    this.classList.toggle('desc', isAscending);
+                    const icon = this.querySelector('i');
+                    if (icon) {
+                        icon.className = isAscending ? 'fas fa-sort-up' : 'fas fa-sort-down';
+                    }
+
+                    // Sort rows
+                    sortTableRows(rows, column, direction, tbody);
+                });
+            });
+
+            // Apply default descending sort for debt table date column
+            const debtTable = document.getElementById('debt');
+            if (debtTable) {
+                const dateHeader = debtTable.querySelector('th[data-column="date"]');
+                if (dateHeader && dateHeader.hasAttribute('data-sort-default') && dateHeader.getAttribute('data-sort-default') === 'desc') {
+                    const tbody = debtTable.querySelector('tbody');
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+                    sortTableRows(rows, 'date', -1, tbody); // -1 for descending
+                    dateHeader.classList.add('desc');
+                    const icon = dateHeader.querySelector('i');
+                    if (icon) icon.className = 'fas fa-sort-down';
+                }
+            }
+
+            // Apply default descending sort for history table id column
+            const historyTable = document.getElementById('history');
+            if (historyTable) {
+                const idHeader = historyTable.querySelector('th[data-column="id"]');
+                if (idHeader && idHeader.hasAttribute('data-sort-default') && idHeader.getAttribute('data-sort-default') === 'desc') {
+                    const tbody = historyTable.querySelector('tbody');
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+                    sortTableRows(rows, 'id', -1, tbody); // -1 for descending
+                    idHeader.classList.add('desc');
+                    const icon = idHeader.querySelector('i');
+                    if (icon) icon.className = 'fas fa-sort-down';
+                }
+            }
+
+            // Handle sort select dropdown
+            document.querySelectorAll('[id^="sortSelect-"]').forEach(select => {
+                select.addEventListener('change', function() {
+                    const tableId = this.id.replace('sortSelect-', '');
+                    const table = document.getElementById(tableId);
+                    if (!table) return;
+
+                    const tbody = table.querySelector('tbody');
+                    const selectedValue = this.value;
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+                    if (tableId === 'debt') {
+                        // Filter by borrower for debt table
+                        rows.forEach(row => {
+                            const borrowerCell = row.querySelector('td:nth-child(3)');
+                            if (!borrowerCell) return;
+
+                            const borrowerName = borrowerCell.textContent.trim();
+                            if (!selectedValue || borrowerName === selectedValue) {
+                                row.style.display = '';
+                            } else {
+                                row.style.display = 'none';
+                            }
+                        });
+                    } else {
+                        // Original sorting logic for other tables
+                        const column = selectedValue;
+                        if (!column) return; // Default option
+
+                        // Always sort ascending for dropdown selection
+                        const direction = 1;
+
+                        // Clear previous sort indicators
+                        sortableHeaders.forEach(h => {
+                            h.classList.remove('asc', 'desc');
+                            const icon = h.querySelector('i');
+                            if (icon) icon.className = 'fas fa-sort';
+                        });
+
+                        // Sort rows
+                        sortTableRows(rows, column, direction, tbody);
+                    }
+                });
+            });
+
+            function sortTableRows(rows, column, direction, tbody) {
+                rows.sort((a, b) => {
+                    const aValue = getCellValue(a, column);
+                    const bValue = getCellValue(b, column);
+
+                    if (aValue < bValue) return -1 * direction;
+                    if (aValue > bValue) return 1 * direction;
+                    return 0;
+                });
+
+                // Re-append sorted rows
+                rows.forEach(row => tbody.appendChild(row));
+            }
+
+            function getCellValue(row, column) {
+                const cells = row.querySelectorAll('td');
+                let cellIndex = 0;
+
+                // Find the correct cell index based on the column
+                const headers = row.closest('table').querySelectorAll('thead th');
+                headers.forEach((header, index) => {
+                    if (header.getAttribute('data-column') === column) {
+                        cellIndex = index;
+                    }
+                });
+
+                const cell = cells[cellIndex];
+                if (!cell) return '';
+
+                const text = cell.textContent.trim();
+
+                // Handle currency values (₱)
+                if (text.startsWith('₱')) {
+                    const num = parseFloat(text.replace('₱', '').replace(',', ''));
+                    return isNaN(num) ? text : num;
+                }
+
+                // Handle status values
+                if (text === 'Paid') return 1;
+                if (text === 'Unpaid') return 0;
+
+                // Try to parse as number
+                const num = parseFloat(text);
+                if (!isNaN(num)) return num;
+
+                // Return as string
+                return text.toLowerCase();
+            }
+        });
+
+        // PWA Install Prompt Handling
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('beforeinstallprompt event fired');
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            // Update UI to notify the user they can install the PWA
+            const installBtn = document.getElementById('installBtn');
+            installBtn.style.display = 'inline-block';
+            console.log('Install button should now be visible');
+        });
+
+        // Check if app is already installed
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('App was installed successfully');
+        });
+
+        const installBtn = document.getElementById('installBtn');
+        installBtn.addEventListener('click', () => {
+            // Hide the install button
+            installBtn.style.display = 'none';
+            // Show the install prompt
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    } else {
+                        console.log('User dismissed the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        });
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
     </script>
 </body>
 </html>

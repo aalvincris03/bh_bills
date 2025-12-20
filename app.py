@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect, text
 import os
@@ -6,7 +6,7 @@ from datetime import datetime
 import requests
 import base64
 
-repository_name = 'bh_bills'
+repository_name = 'Mainu'
 owner_name = 'aalvincris03'
 
 app = Flask(__name__)
@@ -71,9 +71,21 @@ def display_all_data():
                     JOIN person p2 ON d.lender_id = p2.id
                 """)
                 rows = db.session.execute(query).mappings().all()
+                rows = [dict(r) for r in rows]
+                # Convert date strings to datetime objects
+                for row in rows:
+                    if 'date' in row and row['date']:
+                        if isinstance(row['date'], str):
+                            row['date'] = datetime.fromisoformat(row['date'])
             else:
                 rows = db.session.execute(text(f'SELECT * FROM "{table}"')).mappings().all()
-            rows = [dict(r) for r in rows]
+                rows = [dict(r) for r in rows]
+                # Convert timestamp strings to datetime objects for history table
+                if table == 'history':
+                    for row in rows:
+                        if 'timestamp' in row and row['timestamp']:
+                            if isinstance(row['timestamp'], str):
+                                row['timestamp'] = datetime.fromisoformat(row['timestamp'])
             all_data[table] = rows
         except Exception as e:
             all_data[table] = {'error': str(e)}
@@ -212,6 +224,19 @@ def unpaid_details(borrower_id, lender_id):
     unpaid_debts = Debt.query.filter_by(name_id=borrower_id, lender_id=lender_id, status=False).all()
     return render_template('unpaid_details.html', borrower=borrower, lender=lender, unpaid_debts=unpaid_debts)
 
+@app.route('/mark_paid/<int:debt_id>', methods=['POST'])
+def mark_paid(debt_id):
+    debt = Debt.query.get_or_404(debt_id)
+    borrower = Person.query.get(debt.name_id)
+    lender = Person.query.get(debt.lender_id)
+    debt.status = True
+    db.session.commit()
+    history = History(action="mark_paid", debt_id=debt_id, details=f"Marked debt as paid: borrower {borrower.name}, lender {lender.name}, amount {debt.amount}, reason {debt.reason}")
+    db.session.add(history)
+    db.session.commit()
+    flash('Debt marked as paid successfully.', 'success')
+    return redirect(request.referrer or url_for('display_all_data'))
+
 @app.route('/unpaid_all')
 def unpaid_all():
     unpaid_debts = Debt.query.filter_by(status=False).all()
@@ -266,8 +291,15 @@ def upload_to_github():
 
     return redirect(url_for('display_all_data'))
 
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return send_from_directory('static', filename)
+
+@app.route('/manifest.json')
+def manifest():
+    return send_from_directory('.', 'manifest.json')
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     app.run(debug=True)
-
